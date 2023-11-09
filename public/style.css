@@ -1,0 +1,46 @@
+#todos{
+    overflow-y: scroll;
+    max-height: 60vh;
+    max-width: 95vw;
+    border: black 2px;
+    scrollbar-width: 0px;
+    margin-top: 25vh;
+    display: flex;
+    flex-wrap: wrap;
+}
+#uptodos{
+    margin-bottom: -20vh;
+}
+#nfirst{
+    margin-left: 1.8vw;
+}
+.search{
+    display: flex;
+   
+}
+.send{
+    max-width: 50vw;
+    max-height: 5vh;
+    margin-right: 12vw;
+    margin-left: 5vw;
+}
+.data{
+    background-color:blueviolet;
+    color: wheat;
+    width: fit-content;
+    padding: 2px 8px 10px 5px ;
+    border-radius: 3vh;
+    /* display: block; */
+    height: fit-content;
+    margin-bottom: 2vh;
+    margin: 4px 15px;
+
+}
+.buton{
+    background-color: #3498db;
+    color: white;
+}
+.name{
+    font: bold ;
+    /* margin: -1px; */
+}
