@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mongodb</title>
+</head>
+<link rel="stylesheet" href="style.css">
+
+<body>
+    <div class="search">
+        <div class="send">
+            <h2>Jay Shree Ram</h3>
+            <label>First name : <input type="text" name="first" id="first" autofocus /></label><br>
+            <label>Last name : <input type="text" name="second" id="second" /></label>
+            <button id="sendbtn">Send</button>
+        </div>
+        <div id="uptodos">
+            <h4>Update</h4>
+            <label for="nfirst">First name :
+                <input type="nfirst" name="nfirst" id="nfirst" />
+            </label>
+            <br>
+            <label for="nsecond">Second name :
+                <input type="nsecond" name="nsecond" id="nsecond" />
+            </label>
+            <button id="update">Update</button>
+        </div>
+    </div>
+
+    <div id="todos"></div>
+
+    <script>
+        const todos = document.getElementById("todos");
+        const uptodos = document.getElementById("uptodos");
+        const first = document.getElementById("first");
+        const nfirst = document.getElementById("nfirst");
+        const nsecond = document.getElementById("nsecond");
+        const second = document.getElementById("second");
+        const sendbtn = document.getElementById("sendbtn");
+        const update = document.getElementById("update");
+
+        uptodos.style.display = "none";
+        const baseURL = "http://localhost:3000/";
+
+        sendbtn.addEventListener("click", add);
+
+        async function add() {
+            if (first.value == "" && second.value == "") {
+                alert("Fill the blacks ")
+                first.value = "None";
+                second.value = "None";
+            }
+            const add = await fetch(baseURL + "api/todos", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    first: first.value,
+                    second: second.value,
+                }),
+            })
+                .then(() => {
+
+                    first.value = "";
+                    second.value = "";
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log("Locha Padya Bhai");
+                })
+                .finally(() => {
+                    refrash();
+                });
+
+
+            console.log("added");
+        }
+
+        async function refrash() {
+            const data = await getdata().catch((err) => {
+                console.log(error);
+            });
+            todos.innerHTML = "";
+
+
+            data.forEach(element => {
+                todos.innerHTML += `
+                    <div class="data">
+                        <p class="name"><b>First :${element.first}</b></p>
+                        <p class="name"><b>Last : ${element.second} </b></p>
+                        <button class="buton" onclick="deleteitem('${element._id}')" > Delete </button>
+                        <button class="buton" onclick="updateitem('${element._id}')" > Update </button>
+                    </div>
+                    `;
+            });
+        }
+        async function getdata() {
+            const response = await fetch(baseURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await response.json();
+            return data;
+        }
+
+        async function deleteitem(id) {
+            if(uptodos){
+                uptodos.style.display = 'none'
+            }
+            const data = fetch(baseURL + 'api/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            }).then(() => {
+                console.log("Deleted items")
+                refrash()
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+
+        let smid;
+        async function updateitem(id) {
+            uptodos.style.display = "block";
+            const data = await getdata().catch((err) => {
+                console.log(err);
+            });
+            data.forEach(element => {
+                if (element._id == id) {
+                    smid = element._id;
+                    nfirst.value = element.first;
+                    nsecond.value = element.second;
+                }
+            });
+        }
+        update.addEventListener('click', updating)
+
+        async function updating() {
+            const response = await fetch(baseURL + 'api/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: smid,
+                    nfirst: nfirst.value,
+                    nsecond: nsecond.value
+                })
+            }).then(() => {
+                console.log("Updated data")
+                refrash()
+
+            }).catch((err) => {
+                console.log(err)
+
+            }).finally(
+                uptodos.style.display = 'none'
+            )
+
+        }
+    </script>
+</body>
+
+</html>
